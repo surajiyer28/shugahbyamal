@@ -15,3 +15,4 @@ The website consists of following main modules:
 \item About us: All new businesses struggle to create an identity in this competitive world. This module, consisting of detailed information of the business will allow customers to know more about the business and spread information faster.
 \item Shopping cart: In this module, the user will be able to see all the products in his/her basket and also alter the quantity of the products. The user will also be able to see the total amount payable along with the price break-down.
 \item Checkout: This module is designed to take customer information, like name, address, email, etc required to fulfill the order. The form is filled automatically if the user is logged in making the checkout process faster.
+\end{itemize}
