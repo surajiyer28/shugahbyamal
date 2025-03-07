@@ -1,6 +1,6 @@
 # Shugah by Amal
 
-Welcome to the GitHub repository for Shugah by Amal, a home baking business e-commerce website designed to offer a wholesome online shopping experience. From cupcakes to cookies, we ensure high-quality ingredients and perfection in every bite.
+Welcome to the GitHub repository for Shugah by Amal, a home baking business e-commerce website designed to offer a wholesome online shopping experience. This is an e-commerce website for a home baking business with multiple modules that allowed customers to obtain any information or details about the products and services offered by the business and also sign up and buy their products.
 
 ## Website Link
 
