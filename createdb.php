@@ -8,101 +8,148 @@ class CreateDb{
     public $tablename;
     public $con;
 
-
-    //class constructor
-    public function __construct($dbname = "Newdb",$tablename = "Productdb",$servername = "localhost",$username = "root",$password = ""){
-        $this->$dbname = $dbname;
+    // Class constructor with your InfinityFree details
+    public function __construct($dbname = "if0_39606139_sugah", $tablename = "Products", $servername = "sql210.infinityfree.com", $username = "if0_39606139", $password = "Edith283"){
+        $this->dbname = $dbname;
         $this->tablename = $tablename;
         $this->servername = $servername;
         $this->username = $username;
         $this->password = $password;
 
+        // Create connection
+        $this->con = mysqli_connect($servername, $username, $password, $dbname);
 
-        //create connection
-        $this->con = mysqli_connect($servername, $username, $password);
-
-        //check connection
+        // Check connection
         if(!$this->con){
-            die("Connection failed:" .mysqli_connect_error());
-
+            die("Connection failed: " . mysqli_connect_error());
         }
 
+        // Set charset to utf8mb4 for better character support
+        mysqli_set_charset($this->con, "utf8mb4");
 
-        //query
-        $sql = "CREATE DATABASE IF NOT EXISTS $dbname";
+        // Create Products table if it doesn't exist
+        $sql = "CREATE TABLE IF NOT EXISTS $tablename (
+            id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            product_name VARCHAR(100) NOT NULL,
+            product_desc VARCHAR(200),
+            product_price DECIMAL(10,2) NOT NULL,
+            product_image VARCHAR(150),
+            product_type VARCHAR(50),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
 
-        //execute query
-        if(mysqli_query($this->con, $sql)){
-            $this->con = mysqli_connect($servername, $username, $password, $dbname);
-             
-            //sql to create new table
-            $sql = "CREATE TABLE IF NOT EXISTS $tablename
-            (id INT(11)NOT NULL AUTO_INCREMENT PRIMARY KEY,
-            product_name VARCHAR(35) NOT NULL,
-            product_desc VARCHAR(120),
-            product_price FLOAT,
-            product_image VARCHAR(100),
-            product_type VARCHAR(30)
-            );";
-
-
-            if(!mysqli_query($this->con, $sql)){
-                echo "Error creating table:".mysqli_error($this->con);
-
-            }
-            else{
-                return false;
-            }
+        if(!mysqli_query($this->con, $sql)){
+            echo "Error creating Products table: " . mysqli_error($this->con);
         }
-      
-}
-  // get product from the database
-  public function getData(){
-    $sql = "SELECT * FROM $this->tablename";
 
-    $result = mysqli_query($this->con, $sql);
-
-    if(mysqli_num_rows($result) > 0){
-        return $result;
+        // Create other necessary tables
+        $this->createOtherTables();
     }
-   
-}
 
-  public function getDataCupcake(){
-    $sql = "SELECT * FROM $this->tablename where product_name like '%cupcake%'";
+    // Create additional tables needed by your application
+    private function createOtherTables() {
+        // Create signup table with secure password storage
+        $signup_sql = "CREATE TABLE IF NOT EXISTS signup (
+            id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(150) UNIQUE NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            phone VARCHAR(20),
+            address TEXT,
+            custid INT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        mysqli_query($this->con, $signup_sql);
 
-    $result = mysqli_query($this->con, $sql);
+        // Create cart table
+        $cart_sql = "CREATE TABLE IF NOT EXISTS cart (
+            id INT(11) NOT NULL PRIMARY KEY,
+            cart_name VARCHAR(100) NOT NULL,
+            price DECIMAL(10,2) NOT NULL,
+            qty INT DEFAULT 1,
+            session_id VARCHAR(100),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        mysqli_query($this->con, $cart_sql);
 
-    if(mysqli_num_rows($result) > 0){
-        return $result;
+        // Create orders table
+        $orders_sql = "CREATE TABLE IF NOT EXISTS orders (
+            id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            order_id INT NOT NULL,
+            item VARCHAR(100) NOT NULL,
+            qty INT NOT NULL,
+            custid INT,
+            total_cost DECIMAL(10,2),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        mysqli_query($this->con, $orders_sql);
     }
-   
-}
-public function getDataCookie(){
-    $sql = "SELECT * FROM $this->tablename where product_name like '%cookie%'";
 
-    $result = mysqli_query($this->con, $sql);
-
-    if(mysqli_num_rows($result) > 0){
-        return $result;
-    }
-}
-    public function getDataTeacake(){
-        $sql = "SELECT * FROM $this->tablename where product_name like '%Tea%'";
-    
+    // Get all products
+    public function getData(){
+        $sql = "SELECT * FROM $this->tablename ORDER BY created_at DESC";
         $result = mysqli_query($this->con, $sql);
-    
+        
         if(mysqli_num_rows($result) > 0){
             return $result;
         }
+        return false;
     }
-        public function getDataCheese(){
-            $sql = "SELECT * FROM $this->tablename where product_name like '%Cheesecake%'";
+
+    // Get cupcakes
+    public function getDataCupcake(){
+        $sql = "SELECT * FROM $this->tablename WHERE product_name LIKE '%cupcake%' OR product_type LIKE '%cupcake%' ORDER BY created_at DESC";
+        $result = mysqli_query($this->con, $sql);
         
-            $result = mysqli_query($this->con, $sql);
-        
-            if(mysqli_num_rows($result) > 0){
-                return $result;
-            }
+        if(mysqli_num_rows($result) > 0){
+            return $result;
         }
+        return false;
+    }
+
+    // Get cookies
+    public function getDataCookie(){
+        $sql = "SELECT * FROM $this->tablename WHERE product_name LIKE '%cookie%' OR product_type LIKE '%cookie%' ORDER BY created_at DESC";
+        $result = mysqli_query($this->con, $sql);
+        
+        if(mysqli_num_rows($result) > 0){
+            return $result;
+        }
+        return false;
+    }
+
+    // Get tea cakes
+    public function getDataTeacake(){
+        $sql = "SELECT * FROM $this->tablename WHERE product_name LIKE '%Tea%' OR product_type LIKE '%tea%' ORDER BY created_at DESC";
+        $result = mysqli_query($this->con, $sql);
+        
+        if(mysqli_num_rows($result) > 0){
+            return $result;
+        }
+        return false;
+    }
+
+    // Get cheesecakes
+    public function getDataCheese(){
+        $sql = "SELECT * FROM $this->tablename WHERE product_name LIKE '%Cheesecake%' OR product_type LIKE '%cheese%' ORDER BY created_at DESC";
+        $result = mysqli_query($this->con, $sql);
+        
+        if(mysqli_num_rows($result) > 0){
+            return $result;
+        }
+        return false;
+    }
+
+    // Helper method to escape strings (prevent SQL injection)
+    public function escape($string) {
+        return mysqli_real_escape_string($this->con, $string);
+    }
+
+    // Close connection
+    public function closeConnection() {
+        if($this->con) {
+            mysqli_close($this->con);
+        }
+    }
 }
+?>
