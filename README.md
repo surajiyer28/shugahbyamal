@@ -4,7 +4,7 @@ Welcome to the GitHub repository for Shugah by Amal, a home baking business e-co
 
 ## Website Link
 
-Explore our live website [here](http://shugahbyamal.000webhostapp.com/).
+Explore our live website [here](https://shugahbyamal.infinityfree.me/).
 
 ## Features
 
